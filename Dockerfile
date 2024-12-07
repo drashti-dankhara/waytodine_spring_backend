@@ -1,15 +1,8 @@
-# Use a lightweight JDK base image
-FROM eclipse-temurin:17-jdk-alpine
+FROM maven:3.8.5-openjdk-17 AS build
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Set the working directory inside the container
-WORKDIR /tmp
-
-# Copy the JAR file into the container
-#COPY target/*.jar app.jar
-COPY target/waytodine-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose the port on which the application runs
+FROM openjdk:17.0.1-jdk-slim
+COPY --from=build /target/waytodine-0.0.1-SNAPSHOT.jar waytodine.jar
 EXPOSE 8080
-
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java","-jar","waytodine.jar"]
