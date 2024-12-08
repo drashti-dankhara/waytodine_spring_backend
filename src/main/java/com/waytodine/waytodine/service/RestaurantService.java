@@ -12,6 +12,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,13 @@ public class RestaurantService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
+    private final ImageService imageService;
+
+    @Autowired
+    public RestaurantService(@Lazy ImageService imageService) {
+        this.imageService = imageService;
+    }
+
     public Restaurant sendInquiry(Restaurant restaurant, MultipartFile restaurantDocument) {
         Optional<Restaurant> existingInquiry = restaurantRepository.findByEmailAndStatus(restaurant.getEmail(), 0);
         if (existingInquiry.isPresent()) {
@@ -50,7 +58,7 @@ public class RestaurantService {
         }
         restaurant.setStatus(0); // Set status to inquiry stage
         if (restaurantDocument != null && !restaurantDocument.isEmpty()) {
-            String fileName = saveDocument(restaurantDocument);
+            String fileName = imageService.uploadImage(restaurantDocument);
             restaurant.setRestaurantDocument(fileName);
         }
         return restaurantRepository.save(restaurant);

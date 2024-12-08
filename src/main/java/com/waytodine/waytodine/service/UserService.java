@@ -5,6 +5,7 @@ import com.waytodine.waytodine.repository.UserRepository;
 import com.waytodine.waytodine.util.ApiResponse;
 import com.waytodine.waytodine.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +35,14 @@ public class UserService {
     @Autowired
     private JavaMailSender mailSender;
 
+    private final ImageService imageService;
+
     private final Map<String, String> otpStore = new HashMap<>();
+
+    @Autowired
+    public UserService(@Lazy ImageService imageService) {
+        this.imageService = imageService;
+    }
 
     public String register(User user) {
         // Check if email or phone number already exists
@@ -80,7 +88,7 @@ public class UserService {
 
             // Handle profile picture upload
             if (profilePic != null && !profilePic.isEmpty()) {
-                String fileName = saveProfilePic(profilePic);
+                String fileName = imageService.uploadImage(profilePic);
                 user.setProfilePic(fileName);
             }
 
