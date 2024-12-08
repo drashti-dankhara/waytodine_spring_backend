@@ -24,8 +24,6 @@ public class UserController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Value("${profile.pics.url}")
-    private String profilePicsUrl;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody User user) {
@@ -82,7 +80,7 @@ public class UserController {
                 if (user.getEmail() != null) userDetails.put("email", user.getEmail());
                 if (user.getPhoneNumber() != null) userDetails.put("phoneNumber", user.getPhoneNumber());
                 if (user.getLocation() != null) userDetails.put("location", user.getLocation());
-                if (user.getProfilePic() != null) userDetails.put("profilePic", profilePicsUrl + user.getProfilePic());
+                if (user.getProfilePic() != null) userDetails.put("profilePic",  user.getProfilePic());
             }
 
 // Check if the userDetails map is populated, return response
@@ -133,10 +131,8 @@ public class UserController {
 
         // Check if profile picture is not null
         if (updatedUser.getProfilePic() != null) {
-            String profilePicUrl = profilePicsUrl + updatedUser.getProfilePic();
+            String profilePicUrl = updatedUser.getProfilePic();
             updatedUser.setProfilePic(profilePicUrl);
-        } else {
-            updatedUser.setProfilePic(profilePicsUrl + "img.png"); // or you can set it to a default image URL
         }
 
         return ResponseEntity.ok(Map.of("message", "User profile updated successfully", "data", updatedUser, "status", true));

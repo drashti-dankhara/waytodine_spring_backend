@@ -27,10 +27,6 @@ public class RestaurantController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Value("${profile.pics.url}")
-    private String profilePicsUrl;
-
-
     @PostMapping("/send-inquiry")
     public ApiResponse sendInquiry(@RequestParam("name") String name,
                                    @RequestParam("email") String email,
@@ -71,7 +67,7 @@ public class RestaurantController {
         // Iterate over each restaurant in the list and update the restaurant document URL
         for (Restaurant restaurant : res) {
             // Assuming `getRestaurantDocument()` returns the document path for the restaurant
-            String fullDocumentUrl = profilePicsUrl  + restaurant.getRestaurantDocument();
+            String fullDocumentUrl =  restaurant.getRestaurantDocument();
             restaurant.setRestaurantDocument(fullDocumentUrl); // Add a setter for the full URL in your Restaurant class
         }
 
