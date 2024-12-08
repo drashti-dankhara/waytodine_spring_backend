@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -89,7 +90,8 @@ public class UserService {
     }
 
     public String saveProfilePic(MultipartFile file) {
-        String directory = "E:\\WayToDine\\Backend\\waytodine\\src\\main\\resources\\static\\uploads";
+        // Construct the directory path based on the application's working directory
+        String directory = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "uploads";
 
         // Create directory if it doesn't exist
         File dir = new File(directory);
@@ -111,6 +113,7 @@ public class UserService {
 
         return fileName; // Return the file name for the database
     }
+
 
     public ApiResponse sendOtp(String email) {
         // Check if the email is registered
