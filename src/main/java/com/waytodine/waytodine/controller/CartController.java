@@ -1,6 +1,7 @@
 package com.waytodine.waytodine.controller;
 
 import com.waytodine.waytodine.dto.CartItemResponseDTO;
+import com.waytodine.waytodine.dto.OrderedItemsResponse;
 import com.waytodine.waytodine.service.CartService;
 import com.waytodine.waytodine.util.ApiResponse;
 import com.waytodine.waytodine.util.JwtUtil;
@@ -136,6 +137,46 @@ public class CartController {
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ApiResponse("An error occurred while removing all cart items.", null, false));
+        }
+    }
+
+    @GetMapping("/get-delivered-carts")
+    public ResponseEntity<ApiResponse> getDeliveredCarts(@RequestHeader("Authorization") String token) {
+        Long userId = extractUserIdFromToken(token);
+        if (userId == null) {
+            return ResponseEntity.status(401)
+                    .body(new ApiResponse("Invalid or missing token.", null, false));
+        }
+
+        try {
+            List<OrderedItemsResponse> cartItems = cartService.getDeliveredCartsByUserId(userId);
+            if (cartItems.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse("No delivered items found.", cartItems, true));
+            }
+            return ResponseEntity.ok(new ApiResponse("Delivered items retrieved successfully.", cartItems, true));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ApiResponse("An error occurred while fetching delivered carts.", null, false));
+        }
+    }
+
+    @GetMapping("/get-current-orders")
+    public ResponseEntity<ApiResponse> getCurrentOrderes(@RequestHeader("Authorization") String token) {
+        Long userId = extractUserIdFromToken(token);
+        if (userId == null) {
+            return ResponseEntity.status(401)
+                    .body(new ApiResponse("Invalid or missing token.", null, false));
+        }
+
+        try {
+            List<OrderedItemsResponse> cartItems = cartService.getCurrentOrderesByUserId(userId);
+            if (cartItems.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse("No current ordered items found.", cartItems, true));
+            }
+            return ResponseEntity.ok(new ApiResponse("Current Ordered items retrieved successfully.", cartItems, true));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new ApiResponse("An error occurred while fetching Current Ordered items.", null, false));
         }
     }
 }

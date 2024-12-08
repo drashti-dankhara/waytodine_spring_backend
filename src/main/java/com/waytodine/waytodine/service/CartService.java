@@ -1,6 +1,7 @@
 package com.waytodine.waytodine.service;
 
 import com.waytodine.waytodine.dto.CartItemResponseDTO;
+import com.waytodine.waytodine.dto.OrderedItemsResponse;
 import com.waytodine.waytodine.model.Cart;
 import com.waytodine.waytodine.model.MenuItem;
 import com.waytodine.waytodine.model.Restaurant;
@@ -11,11 +12,11 @@ import com.waytodine.waytodine.repository.RestaurantRepository;
 import com.waytodine.waytodine.repository.UserRepository;
 import com.waytodine.waytodine.util.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
@@ -130,4 +131,45 @@ public class CartService {
         }
         return false;
     }
+
+    public List<OrderedItemsResponse> getDeliveredCartsByUserId(Long userId) {
+        List<Cart> carts = cartRepository.findByUserUserIdAndOrderIsNotNullAndOrderOrderStatus(userId, 4, Sort.by(Sort.Order.desc("order.createdAt")));
+        return convertToDTO(carts);
+    }
+
+    public List<OrderedItemsResponse> getCurrentOrderesByUserId(Long userId) {
+        List<Cart> carts = cartRepository.findByUserUserIdAndOrderIsNotNullAndOrderOrderStatusNot(userId, 4,Sort.by(Sort.Order.desc("order.createdAt")));
+        return convertToDTO(carts);
+    }
+
+    private List<OrderedItemsResponse> convertToDTO(List<Cart> carts) {
+        return carts.stream().map(cart -> {
+            // Create a map to represent an ordered item
+            Map<String, Object> orderedItem = new HashMap<>();
+            orderedItem.put("itemId", cart.getMenuItem().getItemId());
+            orderedItem.put("quantity", cart.getQuantity());
+            orderedItem.put("itemName", cart.getMenuItem().getName());
+            orderedItem.put("itemPrice", cart.getMenuItem().getPrice());
+            orderedItem.put("description", cart.getMenuItem().getDescription());
+            orderedItem.put("itemImage", cart.getMenuItem().getItemImage());
+
+            // Create a list of ordered items (could be a single item per cart)
+            List<Map<String, Object>> orderedItemsList = new ArrayList<>();
+            orderedItemsList.add(orderedItem);
+
+            // Create and return the OrderedItemsResponse object
+            return new OrderedItemsResponse(
+                    cart.getCartId(),
+                    cart.getOrder().getOrderId(),
+                    cart.getUser().getUserId(),
+                    cart.getRestaurant().getRestaurantId(),
+                    cart.getRestaurant().getName(),
+                    cart.getTotalPrice(),
+                    cart.getOrder().getCreatedAt(),
+                    cart.getOrder().getOrderStatus(),
+                    orderedItemsList
+            );
+        }).collect(Collectors.toList());
+    }
+
 }
