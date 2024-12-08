@@ -61,7 +61,8 @@ public class RestaurantService {
     }
 
     public String saveDocument(MultipartFile file) {
-        String directory = "E:\\WayToDine\\Backend\\waytodine\\src\\main\\resources\\static\\uploads";
+        // Construct the directory path based on the application's working directory
+        String directory = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "uploads";
 
         // Create directory if it doesn't exist
         File dir = new File(directory);
