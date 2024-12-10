@@ -2,6 +2,7 @@ package com.waytodine.waytodine.repository;
 
 import com.waytodine.waytodine.model.OrderTracking;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,12 +10,13 @@ import java.util.List;
 @Repository
 public interface OrderTrackingRepository extends JpaRepository<OrderTracking, Integer> {
 
-    // Custom method to find tracking details by order ID
-    List<OrderTracking> findByOrderOrderId(int orderId);
+    @Query("SELECT ot FROM OrderTracking ot WHERE ot.order.orderId = :orderId AND ot.deliveryPerson.deliveryPersonId = :deliveryPersonId")
+    List<OrderTracking> findByOrderAndDeliveryPerson(int orderId, int deliveryPersonId);
 
-    // Custom method to find tracking details by delivery person ID
-    List<OrderTracking> findByDeliveryPersonDeliveryPersonId(int deliveryPersonId);
+    @Query("SELECT ot FROM OrderTracking ot WHERE ot.order.orderId = :orderId")
+    List<OrderTracking> findByOrder(int orderId);
 
-    // Custom method to find tracking details for a specific order and delivery person
-    List<OrderTracking> findByOrderOrderIdAndDeliveryPersonDeliveryPersonId(int orderId, int deliveryPersonId);
+    @Query("SELECT ot FROM OrderTracking ot WHERE ot.deliveryPerson.deliveryPersonId = :deliveryPersonId")
+    List<OrderTracking> findByDeliveryPerson(int deliveryPersonId);
 }
+
