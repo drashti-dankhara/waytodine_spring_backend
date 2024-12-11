@@ -44,6 +44,7 @@ public class RestaurantController {
             restaurant.setLocation(location);
             restaurant.setCity(city);
             restaurant.setCountry(country);
+            restaurant.setPassword("nopassword");
 
             Restaurant createdRestaurant = restaurantService.sendInquiry(restaurant,restaurantDocument);
             if (createdRestaurant == null) {
