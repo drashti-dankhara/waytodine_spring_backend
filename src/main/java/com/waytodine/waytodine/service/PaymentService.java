@@ -25,8 +25,8 @@ public class PaymentService {
                 SessionCreateParams.
                         PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:3000/payment/success/"+order.getOrderId())
-                .setCancelUrl("http://localhost:3000/payment/fail")
+                .setSuccessUrl("https://waytodine-customer-frontend.onrender.com/payment/success/"+order.getOrderId())
+                .setCancelUrl("https://waytodine-customer-frontend.onrender.com/payment/fail")
                 .putMetadata("orderId", order.getOrderId().toString())
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
