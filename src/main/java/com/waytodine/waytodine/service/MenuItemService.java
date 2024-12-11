@@ -90,9 +90,9 @@ public class MenuItemService {
                 activeMenuItems = activeMenuItems.stream()
                         .filter(menuItem -> menuItem.getIsVeg() == 1)
                         .collect(Collectors.toList());
-            } else if (filter == 2) {
+            } else if (filter == 0) {
                 activeMenuItems = activeMenuItems.stream()
-                        .filter(menuItem -> menuItem.getIsVeg() == 2)
+                        .filter(menuItem -> menuItem.getIsVeg() == 0)
                         .collect(Collectors.toList());
             }
         }

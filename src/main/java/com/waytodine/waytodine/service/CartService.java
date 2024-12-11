@@ -94,6 +94,12 @@ public class CartService {
         for (Cart cart : cartItems) {
             MenuItem menuItem = menuItemRepository.findById(cart.getMenuItem().getItemId())
                     .orElseThrow(() -> new RuntimeException("Menu item not found"));
+
+            Double currentOfferDiscountRate = 0.0;
+            if (cart.getRestaurant().getRestaurantDetails() != null) {
+                currentOfferDiscountRate = cart.getRestaurant().getRestaurantDetails().getCurrentOfferDiscountRate();
+            }
+
             responseDTOs.add(new CartItemResponseDTO(
                     cart.getCartId(),
                     cart.getUser().getUserId(),
@@ -105,7 +111,7 @@ public class CartService {
                     menuItem.getDescription(),
                     cart.getTotalPrice(),
                     menuItem.getItemImage(),
-                    cart.getRestaurant().getRestaurantDetails().getCurrentOfferDiscountRate()
+                    currentOfferDiscountRate // Use the checked value
             ));
         }
         return responseDTOs;
