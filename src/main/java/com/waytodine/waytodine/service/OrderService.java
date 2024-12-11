@@ -52,6 +52,7 @@ public class OrderService {
         order.setDropoffLocation(dropoffLocation);
         order.setPickupCity(pickupCity);
         order.setDropoffCity(dropoffCity);
+        order.setAccept(false);
 
         order = orderRepository.save(order); // Persist the order in the database
 
